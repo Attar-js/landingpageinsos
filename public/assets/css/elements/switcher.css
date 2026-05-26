@@ -1,0 +1,105 @@
+/*--------------------------
+    Switcher Styles  
+---------------------------*/
+
+.my_switcher {
+    position: fixed;
+    left: 30px;
+    transform: rotate(90deg);
+    z-index: 99;
+    bottom: 30px;
+}
+
+.my_switcher ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border: 2px solid #e5e5e5;
+    border-radius: 100px;
+    line-height: 40px;
+}
+
+.my_switcher ul li {
+    margin: 0;
+    padding: 0;
+}
+
+.my_switcher ul li a,
+.my_switcher ul li button {
+    position: relative;
+    font-size: 12px;
+    line-height: 22px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: .4s;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    width: 40px;
+    height: 40px;
+}
+
+.my_switcher ul li a img,
+.my_switcher ul li button img {
+    width: 15px;
+}
+
+.my_switcher ul li a span,
+.my_switcher ul li button span {
+    transform: rotate(-180deg);
+    display: none;
+}
+
+.my_switcher ul li a.active,
+.my_switcher ul li button.active {
+    display: none;
+}
+
+.my_switcher ul li a.light,
+.my_switcher ul li button.light {
+    color: #ffffff;
+    background: transparent;
+    outline: 0;
+    border: 0;
+}
+
+.my_switcher ul li a.dark,
+.my_switcher ul li button.dark {
+    color: #18191A;
+    background: transparent;
+    outline: 0;
+    border: 0;
+}
+
+@media (max-width: 991px) {
+    .my_switcher {
+        left: 10px;
+    }
+}
+
+@media (max-width: 767px) {
+    .my_switcher {
+        left: 4px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
