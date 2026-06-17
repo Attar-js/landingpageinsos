@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Schema;
  */
 return new class extends Migration
 {
-    protected string $connection = 'dashboard';
+    protected $connection = 'dashboard';
 
     public function up(): void
     {

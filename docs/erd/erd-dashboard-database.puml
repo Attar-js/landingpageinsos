@@ -1,0 +1,92 @@
+@startchen
+title ERD — Database Dashboard (Dokumen Upload)
+skinparam linetype ortho
+
+entity "User\n(App DB)" as user {
+  * idUser
+  --
+  nim
+  username
+  role
+}
+
+entity "Kelompok\n(App DB)" as kelompok {
+  * idKelompok
+  --
+  judul_kegiatan
+  nama_kelompok
+}
+
+entity "Proposal" as proposal {
+  * idProposal
+  --
+  judul_kegiatan
+  user_nim
+  file_path
+  file_name
+  file_size
+  status
+  catatan
+}
+
+entity "Laporan Akhir" as laporan {
+  * idLaporan
+  --
+  judul_kegiatan
+  user_nim
+  file_path
+  file_name
+  file_size
+  status
+  catatan
+}
+
+entity "Luaran" as luaran {
+  * idLuaran
+  --
+  judul_kegiatan
+  user_nim
+  video_aftermovie
+  artikel_link
+  artikel_file_path
+  status
+  catatan
+}
+
+relationship "Mengunggah Proposal" as rel_prop {
+  user -1- rel_prop
+  rel_prop -N- proposal
+}
+
+relationship "Terhubung Judul" as rel_judul_prop {
+  kelompok -1- rel_judul_prop
+  rel_judul_prop -N- proposal
+}
+
+relationship "Mengunggah Laporan" as rel_lap {
+  user -1- rel_lap
+  rel_lap -N- laporan
+}
+
+relationship "Terhubung Judul Laporan" as rel_judul_lap {
+  kelompok -1- rel_judul_lap
+  rel_judul_lap -N- laporan
+}
+
+relationship "Mengunggah Luaran" as rel_luar {
+  user -1- rel_luar
+  rel_luar -N- luaran
+}
+
+relationship "Terhubung Judul Luaran" as rel_judul_luar {
+  kelompok -1- rel_judul_luar
+  rel_judul_luar -N- luaran
+}
+
+note bottom of proposal
+  Relasi ke User/Kelompok via
+  user_nim + judul_kegiatan
+  (bukan foreign key fisik)
+end note
+
+@endchen

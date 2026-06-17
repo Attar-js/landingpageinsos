@@ -696,6 +696,26 @@ class DosenController extends Controller
 
     /**
      * API untuk mendapatkan daftar dosen
+     *
+     * @OA\Get(
+     *     path="/api/dosen/list",
+     *     summary="Daftar semua dosen",
+     *     description="Mengembalikan daftar seluruh pengguna dengan role dosen.",
+     *     tags={"Dosen"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Berhasil mengambil daftar dosen",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer", example=12),
+     *                 @OA\Property(property="name", type="string", example="Dr. Andi"),
+     *                 @OA\Property(property="email", type="string", example="andi@kampus.ac.id"),
+     *                 @OA\Property(property="nip", type="string", example="198001012005011001")
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function getDosenList()
     {
@@ -715,6 +735,37 @@ class DosenController extends Controller
 
     /**
      * API untuk menerima assignment dari tim penciri
+     *
+     * @OA\Post(
+     *     path="/api/dosen/assign-group",
+     *     summary="Menugaskan dosen ke sebuah kelompok",
+     *     description="Menerima penugasan dosen pembimbing ke kelompok dari sistem tim penciri.",
+     *     tags={"Dosen"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"group_id", "dosen_id"},
+     *             @OA\Property(property="group_id", type="integer", example=3, description="ID kelompok yang akan ditugaskan"),
+     *             @OA\Property(property="dosen_id", type="integer", example=12, description="ID dosen pembimbing")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Assignment berhasil diterima",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Assignment berhasil diterima")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Kelompok tidak ditemukan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Kelompok tidak ditemukan")
+     *         )
+     *     )
+     * )
      */
     public function receiveAssignment(Request $request)
     {

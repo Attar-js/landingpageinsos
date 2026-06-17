@@ -1,0 +1,197 @@
+@startchen
+title ERD — Database Aplikasi (Inovasi Sosial / Project Akhir)
+skinparam linetype ortho
+
+' ========== ENTITAS ==========
+
+entity "User" as user {
+  * idUser
+  --
+  username
+  password
+  role
+  nim
+  nip
+  program_studi
+  nama
+  email
+  status
+}
+
+entity "Kelompok" as kelompok {
+  * idKelompok
+  --
+  nama_kelompok
+  judul_kegiatan
+  lokasi_kkn
+  deskripsi_kegiatan
+  nama_mitra
+  lokasi_mitra
+  status
+  progress_verifikasi
+  proposal_review_status
+  catatan
+}
+
+entity "Anggota Kelompok" as anggota {
+  * idAnggota
+  --
+  role
+  status
+  dropped_at
+  drop_reason
+}
+
+entity "Permintaan Pembimbing" as supervisor_req {
+  * idPermintaan
+  --
+  status
+  note
+  responded_at
+}
+
+entity "Penilaian" as penilaian {
+  * idPenilaian
+  --
+  mahasiswa_nim
+  proposal_kegiatan
+  asistensi
+  peer_review
+  laporan_akhir
+  presentasi_akhir
+  pembimbing_lapangan
+  nilai_akhir
+  catatan
+  tanggal_penilaian
+}
+
+entity "Peer Review" as peer {
+  * idPeerReview
+  --
+  judul_kegiatan
+  kontribusi_kegiatan
+  tanggung_jawab
+  kerjasama_tim
+  inisiatif_motivasi
+  final_score
+  status
+  submitted_at
+}
+
+entity "Verifikasi Dokumen" as verifikasi {
+  * idVerifikasi
+  --
+  status
+  laporan_status
+  artikel_status
+  video_status
+  note
+  reviewed_at
+}
+
+entity "Rubrik CPMK" as rubrik {
+  * idRubrik
+  --
+  deskripsi_p5
+  deskripsi_c3
+  deskripsi_a2
+  skor_p5
+  skor_c3
+  skor_a2
+  catatan
+}
+
+entity "Form Kesediaan" as form_kesediaan {
+  * idForm
+  --
+  judul_kegiatan
+  file_name
+  file_path
+  user_nim
+  status
+  catatan
+}
+
+' ========== RELASI (berlian) ==========
+
+relationship "Membimbing" as rel_membimbing {
+  user -N- rel_membimbing
+  rel_membimbing -1- kelompok
+}
+
+relationship "Memimpin" as rel_memimpin {
+  user -1- rel_memimpin
+  rel_memimpin -N- kelompok
+}
+
+relationship "Menjadi Anggota" as rel_anggota {
+  user -N- rel_anggota
+  rel_anggota -N- anggota
+}
+
+relationship "Memiliki Anggota" as rel_punya_anggota {
+  kelompok -1- rel_punya_anggota
+  rel_punya_anggota -N- anggota
+}
+
+relationship "Mengajukan Pembimbing" as rel_ajukan_spv {
+  kelompok -1- rel_ajukan_spv
+  rel_ajukan_spv -N- supervisor_req
+}
+
+relationship "Ditujukan Kepada" as rel_spv_ke {
+  user -1- rel_spv_ke
+  rel_spv_ke -N- supervisor_req
+}
+
+relationship "Menilai" as rel_menilai {
+  user -1- rel_menilai
+  rel_menilai -N- penilaian
+}
+
+relationship "Dinilai" as rel_dinilai {
+  user -1- rel_dinilai
+  rel_dinilai -N- penilaian
+}
+
+relationship "Melakukan Review" as rel_review {
+  kelompok -1- rel_review
+  rel_review -N- peer
+}
+
+relationship "Memberi Review" as rel_reviewer {
+  user -1- rel_reviewer
+  rel_reviewer -N- peer
+}
+
+relationship "Menerima Review" as rel_reviewee {
+  user -1- rel_reviewee
+  rel_reviewee -N- peer
+}
+
+relationship "Memverifikasi" as rel_verifikasi {
+  kelompok -1- rel_verifikasi
+  rel_verifikasi -1- verifikasi
+}
+
+relationship "Memverifikasi Dokumen" as rel_verifikator {
+  user -1- rel_verifikator
+  rel_verifikator -N- verifikasi
+}
+
+relationship "Mengisi Rubrik" as rel_rubrik_kelompok {
+  kelompok -1- rel_rubrik_kelompok
+  rel_rubrik_kelompok -1- rubrik
+}
+
+relationship "Mengisi Rubrik CPMK" as rel_pengisi_rubrik {
+  user -1- rel_pengisi_rubrik
+  rel_pengisi_rubrik -N- rubrik
+}
+
+relationship "Mengunggah Form" as rel_upload_form {
+  user -1- rel_upload_form
+  rel_upload_form -N- form_kesediaan
+}
+
+@endchen

@@ -1,0 +1,233 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Sistem Penilaian KKN (project-akhir)",
+        "description": "Dokumentasi API untuk sistem penilaian KKN. Menyediakan endpoint untuk status verifikasi kelompok, daftar dosen, dan penugasan dosen ke kelompok.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Server pengembangan lokal"
+        }
+    ],
+    "paths": {
+        "/api/dosen/list": {
+            "get": {
+                "tags": [
+                    "Dosen"
+                ],
+                "summary": "Daftar semua dosen",
+                "description": "Mengembalikan daftar seluruh pengguna dengan role dosen.",
+                "operationId": "1df48b4d565b10c3146a54483399263b",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mengambil daftar dosen",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 12
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Dr. Andi"
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "andi@kampus.ac.id"
+                                            },
+                                            "nip": {
+                                                "type": "string",
+                                                "example": "198001012005011001"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/dosen/assign-group": {
+            "post": {
+                "tags": [
+                    "Dosen"
+                ],
+                "summary": "Menugaskan dosen ke sebuah kelompok",
+                "description": "Menerima penugasan dosen pembimbing ke kelompok dari sistem tim penciri.",
+                "operationId": "162311e08841a824aac49f5657293a2a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "group_id",
+                                    "dosen_id"
+                                ],
+                                "properties": {
+                                    "group_id": {
+                                        "description": "ID kelompok yang akan ditugaskan",
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "dosen_id": {
+                                        "description": "ID dosen pembimbing",
+                                        "type": "integer",
+                                        "example": 12
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Assignment berhasil diterima",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Assignment berhasil diterima"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Kelompok tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kelompok tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/groups/status-verifikasi": {
+            "get": {
+                "tags": [
+                    "Kelompok"
+                ],
+                "summary": "Daftar status verifikasi semua kelompok",
+                "description": "Mengembalikan daftar kelompok beserta anggota dan persentase progress verifikasi dokumen.",
+                "operationId": "fcd1ea4f5867bd9634e8010680f27377",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mengambil data kelompok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "nama_kelompok": {
+                                                "type": "string",
+                                                "example": "Kelompok A"
+                                            },
+                                            "judul_kegiatan": {
+                                                "type": "string",
+                                                "example": "Pemberdayaan Masyarakat Pesisir"
+                                            },
+                                            "lokasi_kkn": {
+                                                "type": "string",
+                                                "example": "Desa Maju"
+                                            },
+                                            "nama_mitra": {
+                                                "type": "string",
+                                                "example": "Kampung Blaton"
+                                            },
+                                            "lokasi_mitra": {
+                                                "type": "string",
+                                                "example": "Jl. Murjani"
+                                            },
+                                            "members": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Budi Santoso"
+                                                        },
+                                                        "nim": {
+                                                            "type": "string",
+                                                            "example": "2021001"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "progress_verifikasi": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 66.67
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "example": "active"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "description": "Masukkan token autentikasi Sanctum di sini.",
+                "bearerFormat": "Token",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Dosen",
+            "description": "Dosen"
+        },
+        {
+            "name": "Kelompok",
+            "description": "Kelompok"
+        }
+    ]
+}

@@ -12,6 +12,38 @@ class GroupController extends Controller
 {
     /**
      * API untuk mendapatkan status verifikasi kelompok
+     *
+     * @OA\Get(
+     *     path="/api/groups/status-verifikasi",
+     *     summary="Daftar status verifikasi semua kelompok",
+     *     description="Mengembalikan daftar kelompok beserta anggota dan persentase progress verifikasi dokumen.",
+     *     tags={"Kelompok"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Berhasil mengambil data kelompok",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="nama_kelompok", type="string", example="Kelompok A"),
+     *                 @OA\Property(property="judul_kegiatan", type="string", example="Pemberdayaan Masyarakat Pesisir"),
+     *                 @OA\Property(property="lokasi_kkn", type="string", example="Desa Maju"),
+     *                 @OA\Property(property="nama_mitra", type="string", example="Kampung Blaton"),
+     *                 @OA\Property(property="lokasi_mitra", type="string", example="Jl. Murjani"),
+     *                 @OA\Property(
+     *                     property="members",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="name", type="string", example="Budi Santoso"),
+     *                         @OA\Property(property="nim", type="string", example="2021001")
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="progress_verifikasi", type="number", format="float", example=66.67),
+     *                 @OA\Property(property="status", type="string", example="active")
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function getStatusVerifikasi()
     {
