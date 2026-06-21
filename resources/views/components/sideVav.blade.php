@@ -36,6 +36,17 @@
                     <a href="{{ route('landing') }}">Home</a>
                 </li>
 
+                @if(Auth::check() && Auth::user()->isMahasiswa())
+                <li>
+                    <a href="{{ route('konversi') }}">Pendaftaran Konversi</a>
+                </li>
+                <li>
+                    <a href="{{ route('laporanakhir') }}">Luaran</a>
+                </li>
+                <li>
+                    <a href="{{ route('peer-review.upload') }}">Peer Review</a>
+                </li>
+                @else
                 @unless(Auth::check() && (Auth::user()->isDosen() || Auth::user()->hasRole('tim_penciri')))
                 <li class="has-dropdown has-menu-child-item">
                     <a href="#">Konversi <i class="feather-chevron-down"></i></a>
@@ -56,6 +67,7 @@
                     </ul>
                 </li>
                 @endunless
+                @endif
 
                 @if(Auth::check() && Auth::user()->isDosen())
                 <li class="has-dropdown has-menu-child-item">

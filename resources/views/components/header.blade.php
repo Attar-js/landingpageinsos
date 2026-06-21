@@ -26,6 +26,17 @@
                                     <a href="{{ route('landing') }}">Home</a>
                                 </li>
 
+                                @if(Auth::check() && Auth::user()->isMahasiswa())
+                                <li class="with-megamenu has-menu-child-item position-static">
+                                    <a href="{{ route('konversi') }}">Pendaftaran Konversi</a>
+                                </li>
+                                <li class="with-megamenu has-menu-child-item position-static">
+                                    <a href="{{ route('laporanakhir') }}">Luaran</a>
+                                </li>
+                                <li class="with-megamenu has-menu-child-item position-static">
+                                    <a href="{{ route('peer-review.upload') }}">Peer Review</a>
+                                </li>
+                                @else
                                 @unless(Auth::check() && (Auth::user()->isDosen() || Auth::user()->hasRole('tim_penciri')))
                                 <li class="has-dropdown has-menu-child-item">
                                     <a href="#">Konversi
@@ -55,6 +66,7 @@
                                     </ul>
                                 </li>
                                 @endunless
+                                @endif
 
                                 @if(Auth::check() && Auth::user()->isDosen())
                                 <li class="has-dropdown has-menu-child-item">
