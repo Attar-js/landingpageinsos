@@ -70,13 +70,14 @@
                 @endif
 
                 @if(Auth::check() && Auth::user()->isDosen())
+                <li>
+                    <a href="{{ route('dosen.persetujuan-kelompok') }}">Pendaftaran</a>
+                </li>
                 <li class="has-dropdown has-menu-child-item">
                     <a href="#">Penilaian dan Evaluasi <i class="feather-chevron-down"></i></a>
                     <ul class="submenu">
-                                                 <li><a href="{{ route('dosen.mahasiswa-bimbingan') }}">Mahasiswa Bimbingan</a></li>
-                        <li><a href="{{ route('dosen.persetujuan-kelompok') }}">Persetujuan Kelompok</a></li>
-                        <li><a href="{{ route('dosen.validasi-dokumen') }}">Validasi Dokumen Mahasiswa</a></li>
-                        <li><a href="{{ route('status-verifikasi') }}">Status Verifikasi</a></li>
+                        <li><a href="{{ route('dosen.validasi-dokumen') }}">Verifikasi Dokumen</a></li>
+                        <li><a href="{{ route('dosen.mahasiswa-bimbingan') }}">Penilaian</a></li>
                     </ul>
                 </li>
                 @endif

@@ -6,14 +6,6 @@
 <body class="<?php echo (isset($bodyClass) ?  $bodyClass   : 'rbt-header-sticky')?>">
 
     <?php 
-        if (!isset($switcher)) {
-            ?>
-            <x-switcher/>
-            <?php
-        }
-    ?>
-
-    <?php 
         if (!isset($header)) {
             ?>
             <x-header/>

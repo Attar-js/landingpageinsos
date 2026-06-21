@@ -28,24 +28,8 @@
     <script src="{{ asset('assets/js/vendor/plyr.js') }}"></script>
     <script src="{{ asset('assets/js/vendor/jodit.min.js') }}"></script>
     <script src="{{ asset('assets/js/vendor/Sortable.min.js') }}"></script>
-    <!-- Style Switcher JS -->
-    <script src="{{ asset('assets/js/vendor/jquery.style.switcher.js') }}"></script>
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Main JS -->
     <script src="{{ asset('assets/js/main.js') }}"></script>
     
-    <!-- Initialize Style Switcher -->
-    <script>
-        $(document).ready(function() {
-            $('.my_switcher').styleSwitcher({
-                hasPreview: false,
-                fullPath: "{{ asset('assets/css/') }}",
-                cookie: {
-                    expires: 30,
-                    isManagingLoad: true
-                }
-            });
-        });
-    </script>
-

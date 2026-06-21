@@ -25,7 +25,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/magnigy-popup.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/plyr.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/jodit.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/elements/switcher.css') }}">
 
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
 </head>
