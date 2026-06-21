@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', [DashboardController::class, 'home'])->name('home');
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });
 
 // Landing page route (Public)

@@ -56,4 +56,24 @@ class ProfileController extends Controller
 
         return redirect()->route('profile.show')->with('success', 'Profil berhasil diperbarui.');
     }
+
+    public function updatePassword(Request $request)
+    {
+        $validated = $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'current_password.required' => 'Password saat ini wajib diisi.',
+            'current_password.current_password' => 'Password saat ini tidak sesuai.',
+            'password.required' => 'Password baru wajib diisi.',
+            'password.min' => 'Password baru minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        Auth::user()->update([
+            'password' => $validated['password'],
+        ]);
+
+        return redirect()->route('profile.show')->with('password_success', 'Password berhasil diperbarui.');
+    }
 }
