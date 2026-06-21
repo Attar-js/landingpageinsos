@@ -3,17 +3,9 @@
         <div class="inner-top">
             <div class="content">
                 <div class="logo">
-                    <div class="logo logo-dark">
-                        <a href="{{ route('landing') }}">
-                            <img src="{{ asset('assets/images/logo/logo.png') }}" alt="Education Logo Images">
-                        </a>
-                    </div>
-
-                    <div class="logo d-none logo-light">
-                        <a href="{{ route('landing') }}">
-                            <img src="{{ asset('assets/images/dark/logo/logo-light.png') }}" alt="Education Logo Images">
-                        </a>
-                    </div>
+                    <a href="{{ route('landing') }}">
+                        <img src="{{ asset('assets/images/logo/logo.png') }}" alt="Institut Teknologi Kalimantan">
+                    </a>
                 </div>
                 <div class="rbt-btn-close">
                     <button class="close-button rbt-round-btn"><i class="feather-x"></i></button>

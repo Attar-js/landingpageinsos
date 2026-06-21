@@ -6,15 +6,9 @@
                 <div class="mainbar-row rbt-navigation-center align-items-center">
                     <div class="header-left rbt-header-content">
                         <div class="header-info">
-                            <div class="logo logo-dark">
+                            <div class="logo">
                                 <a href="{{ route('landing') }}">
-                                    <img src="{{ asset('assets/images/logo/logo.png') }}" alt="Education Logo Images">
-                                </a>
-                            </div>
-
-                            <div class="logo d-none logo-light">
-                                <a href="{{ route('landing') }}">
-                                    <img src="{{ asset('assets/images/dark/logo/logo-light.png') }}" alt="Education Logo Images">
+                                    <img src="{{ asset('assets/images/logo/logo.png') }}" alt="Institut Teknologi Kalimantan">
                                 </a>
                             </div>
                         </div>

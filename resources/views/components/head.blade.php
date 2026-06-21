@@ -27,5 +27,10 @@
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/jodit.min.css') }}">
 
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+    <style>
+        .logo a img {
+            object-fit: contain;
+        }
+    </style>
 </head>
 

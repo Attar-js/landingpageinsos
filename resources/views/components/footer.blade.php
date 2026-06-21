@@ -4,14 +4,9 @@
             <div class="row g-5">
                 <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                     <div class="footer-widget">
-                        <div class="logo logo-dark">
+                        <div class="logo">
                             <a href="#">
-                                <img src="{{ asset('assets/images/logo/logo.png') }}" alt="Edu-cause">
-                            </a>
-                        </div>
-                        <div class="logo d-none logo-light">
-                            <a href="#">
-                                <img src="{{ asset('assets/images/dark/logo/logo-light.png') }}" alt="Edu-cause">
+                                <img src="{{ asset('assets/images/logo/logo.png') }}" alt="Institut Teknologi Kalimantan">
                             </a>
                         </div>
 

@@ -284,7 +284,7 @@
         <!-- Left Panel - Illustration -->
         <div class="illustration-panel">
             <div class="overlay-content">
-                <img src="{{ asset('assets/images/logo/logo.png') }}" alt="Logo" style="width: 50px; height: 50px; object-fit: contain;">
+                <img src="{{ asset('assets/images/logo/logo.png') }}" alt="Institut Teknologi Kalimantan" style="height: 70px; width: auto; object-fit: contain;">
                 <div>
                     <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); line-height: 1.2;">INOVASI SOSIAL</h2>
                 </div>
