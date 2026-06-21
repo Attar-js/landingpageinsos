@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\Models\GroupMember;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Services\NotificationService;
 
 class GroupProposalReviewService
 {
@@ -105,6 +106,26 @@ class GroupProposalReviewService
             'proposal_reviewed_by' => $reviewerId,
             'proposal_reviewed_at' => now(),
         ]);
+
+        $group->loadMissing('dosen');
+        $dosenName = $group->dosen?->name ?? NotificationService::actorName($reviewerId);
+
+        if ($action === 'approve') {
+            NotificationService::notifyGroupMembers(
+                $group,
+                $dosenName . ' menyetujui proposal kelompok "' . $group->nama_kelompok . '".',
+                route('konversi'),
+                'check-circle'
+            );
+        } else {
+            $noteSuffix = filled($note) ? ' Catatan: ' . $note : '';
+            NotificationService::notifyGroupMembers(
+                $group,
+                $dosenName . ' meminta revisi proposal kelompok "' . $group->nama_kelompok . '".' . $noteSuffix,
+                route('konversi'),
+                'alert-triangle'
+            );
+        }
     }
 
     public function markPendingAfterReupload(Group $group): void

@@ -7,6 +7,7 @@ use App\Models\GroupDocumentReview;
 use App\Models\GroupMember;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Services\NotificationService;
 
 class GroupDocumentStatusService
 {
@@ -52,7 +53,9 @@ class GroupDocumentStatusService
         $group->loadMissing(['documentReview', 'dosen', 'groupLeader']);
 
         $documents = $this->buildDocuments($group);
-        $review = $group->documentReview ?? $this->ensureReviewRecord($group);
+        $review = GroupDocumentReview::query()
+            ->where('group_id', $group->id)
+            ->first() ?? $this->ensureReviewRecord($group);
 
         foreach (self::DOC_KEYS as $key) {
             $documents[$key]['review_status'] = $review->statusFor($key);
@@ -90,11 +93,13 @@ class GroupDocumentStatusService
 
         $revisionNotes = [];
         foreach ($documents as $doc) {
-            if (($doc['needs_revision'] ?? false) && filled($doc['review_note'] ?? null)) {
+            if ($doc['needs_revision'] ?? false) {
                 $revisionNotes[] = [
                     'key' => $doc['key'],
                     'label' => $doc['label'],
-                    'note' => $doc['review_note'],
+                    'note' => filled($doc['review_note'] ?? null)
+                        ? $doc['review_note']
+                        : 'Dosen meminta revisi dokumen ini.',
                 ];
             }
         }
@@ -134,6 +139,32 @@ class GroupDocumentStatusService
         $review->reviewed_at = now();
         $review->syncOverallStatus();
         $review->save();
+
+        $group->loadMissing('dosen');
+        $labels = [
+            GroupDocumentReview::DOC_LAPORAN => 'Laporan Akhir',
+            GroupDocumentReview::DOC_ARTIKEL => 'Artikel',
+            GroupDocumentReview::DOC_VIDEO => 'Video Luaran',
+        ];
+        $docLabel = $labels[$docKey] ?? 'Dokumen';
+        $dosenName = $group->dosen?->name ?? NotificationService::actorName($reviewerId);
+
+        if ($action === 'approve') {
+            NotificationService::notifyGroupMembers(
+                $group,
+                $dosenName . ' menyetujui ' . $docLabel . ' kelompok "' . $group->nama_kelompok . '".',
+                route('laporanakhir'),
+                'check-circle'
+            );
+        } else {
+            $noteSuffix = filled($note) ? ' Catatan: ' . $note : '';
+            NotificationService::notifyGroupMembers(
+                $group,
+                $dosenName . ' meminta revisi ' . $docLabel . ' kelompok "' . $group->nama_kelompok . '".' . $noteSuffix,
+                route('laporanakhir'),
+                'alert-triangle'
+            );
+        }
     }
 
     public function markDocumentPendingAfterUpload(Group $group, string $docKey): void

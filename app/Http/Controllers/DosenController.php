@@ -14,6 +14,7 @@ use App\Models\FormKesediaan;
 use App\Models\GroupDocumentReview;
 use App\Services\GroupDocumentStatusService;
 use App\Services\GroupProposalReviewService;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -1021,9 +1022,11 @@ class DosenController extends Controller
         $proposalReviewService->reviewProposal(
             $group,
             $action,
-            $action === 'reject' ? $httpRequest->note : null,
+            $action === 'reject' ? $httpRequest->input('note') : null,
             (int) Auth::id()
         );
+
+        $group->refresh();
 
         if ($action === 'approve') {
             $message = $context === 'validasi'
@@ -1149,6 +1152,13 @@ class DosenController extends Controller
             'catatan' => 'Kesediaan dosen tersimpan otomatis saat menyetujui kelompok ID ' . $group->id,
         ]);
 
+        NotificationService::send(
+            (int) $request->requested_by,
+            'Pengajuan kelompok "' . $group->nama_kelompok . '" telah disetujui dosen pembimbing.',
+            route('konversi'),
+            'check-circle'
+        );
+
         return redirect()->back()->with('success', 'Pengajuan kelompok berhasil disetujui.');
     }
 
@@ -1190,6 +1200,13 @@ class DosenController extends Controller
                 'catatan' => $httpRequest->note ?: 'Pengajuan ditolak dosen pembimbing.',
             ]);
         });
+
+        NotificationService::send(
+            (int) $request->requested_by,
+            'Pengajuan kelompok "' . $request->group->nama_kelompok . '" ditolak dosen pembimbing.',
+            route('konversi'),
+            'alert-triangle'
+        );
 
         return redirect()->back()->with('success', 'Pengajuan kelompok berhasil ditolak.');
     }
@@ -1412,9 +1429,11 @@ class DosenController extends Controller
             $group,
             $docType,
             'reject',
-            $httpRequest->note,
+            $httpRequest->input('note'),
             (int) Auth::id()
         );
+
+        $group->unsetRelation('documentReview');
 
         return redirect()->route('dosen.validasi-dokumen')
             ->with('success', 'Permintaan revisi untuk ' . ($doc['label'] ?? 'dokumen') . ' telah dikirim. Mahasiswa hanya perlu mengunggah ulang dokumen tersebut.');

@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use App\Helpers\DashboardHelper;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Services\GroupProposalReviewService;
@@ -222,7 +223,9 @@ class KknController extends Controller
 
             $selectedMembers = User::whereIn('id', $memberIds)->where('role', 'mahasiswa')->get();
 
-            DB::transaction(function () use ($request, $user, $memberIds, $selectedMembers, $selectedDosen, $pendaftar) {
+            $createdGroup = null;
+
+            DB::transaction(function () use ($request, $user, $memberIds, $selectedMembers, $selectedDosen, $pendaftar, &$createdGroup) {
                 $group = Group::create([
                     'nama_kelompok' => trim($request->nama_kelompok),
                     'judul_kegiatan' => trim($request->judul_kegiatan),
@@ -252,6 +255,8 @@ class KknController extends Controller
                     'note' => 'Pengajuan dosen pembimbing baru dari pendaftaran kelompok.',
                 ]);
 
+                $createdGroup = $group;
+
                 foreach ($selectedMembers as $member) {
                     KknAnggota::create([
                         'kkn_pendaftar_id' => $pendaftar->id,
@@ -262,6 +267,15 @@ class KknController extends Controller
                     ]);
                 }
             });
+
+            if ($createdGroup) {
+                NotificationService::send(
+                    (int) $selectedDosen->id,
+                    $user->name . ' mengajukan persetujuan kelompok "' . $createdGroup->nama_kelompok . '".',
+                    route('dosen.persetujuan-kelompok', ['group' => $createdGroup->id]),
+                    'clock'
+                );
+            }
 
             $successMessage = $request->hasFile('proposal_file')
                 ? 'Pendaftaran kelompok berhasil disimpan dan menunggu persetujuan dosen pembimbing.'

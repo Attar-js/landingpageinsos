@@ -120,5 +120,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Group::class, 'dosen_id');
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(UserNotification::class);
+    }
 }
 

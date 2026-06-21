@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Group;
 use App\Models\GroupCpmkRubric;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -206,6 +207,8 @@ class TimPenciriController extends Controller
                 ->withInput();
         }
 
+        $isFirstScore = !$existing->hasSkor();
+
         $existing->update([
             'skor_p5' => $validated['skor_p5'],
             'skor_c3' => $validated['skor_c3'],
@@ -213,6 +216,18 @@ class TimPenciriController extends Controller
             'catatan' => $validated['catatan'] ?? $existing->catatan,
             'skor_filled_by' => Auth::id(),
         ]);
+
+        $rubrikTotal = number_format($existing->fresh()->rubrik_total, 2);
+        $message = $isFirstScore
+            ? 'Tim MK Penciri telah memverifikasi dan memberikan nilai rubrik CPMK kelompok "' . $group->nama_kelompok . '". Total skor: ' . $rubrikTotal . '.'
+            : 'Tim MK Penciri memperbarui nilai rubrik CPMK kelompok "' . $group->nama_kelompok . '". Total skor: ' . $rubrikTotal . '.';
+
+        NotificationService::notifyGroupMembers(
+            $group,
+            $message,
+            route('konversi'),
+            'check-circle'
+        );
 
         return redirect()->route('tim-penciri.rubrik-cpmk')
             ->with('success', 'Skor rubrik CPMK untuk kelompok "' . $group->nama_kelompok . '" berhasil disimpan.');

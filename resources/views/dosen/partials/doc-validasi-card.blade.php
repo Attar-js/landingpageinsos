@@ -67,26 +67,28 @@
     <div class="doc-review-footer">
         @if($canReview && $approveRoute && $rejectRoute)
             @php $rejectFormId = 'reject-' . $groupId . '-' . $docKey; @endphp
-            <input type="text"
-                   name="note"
-                   form="{{ $rejectFormId }}"
-                   class="form-control doc-note-input"
-                   placeholder="Catatan revisi (opsional)">
-            <div class="doc-review-actions">
-                <form id="{{ $rejectFormId }}" action="{{ $rejectRoute }}" method="POST">
-                    @csrf
-                    <button type="submit"
-                            class="btn btn-revisi-sm"
-                            onclick="return confirm('Minta revisi untuk {{ $doc['label'] }}?');">
-                        Revisi
-                    </button>
-                </form>
-                <form action="{{ $approveRoute }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-setuju-sm">
-                        Setujui
-                    </button>
-                </form>
+            <div class="doc-review-panel">
+                <input type="text"
+                       name="note"
+                       form="{{ $rejectFormId }}"
+                       class="form-control doc-note-input"
+                       placeholder="Catatan revisi (opsional)">
+                <div class="doc-review-buttons">
+                    <form id="{{ $rejectFormId }}" action="{{ $rejectRoute }}" method="POST" class="doc-review-form">
+                        @csrf
+                        <button type="submit"
+                                class="btn btn-revisi-sm"
+                                onclick="return confirm('Minta revisi untuk {{ $doc['label'] }}?');">
+                            Revisi
+                        </button>
+                    </form>
+                    <form action="{{ $approveRoute }}" method="POST" class="doc-review-form">
+                        @csrf
+                        <button type="submit" class="btn btn-setuju-sm">
+                            Setujui
+                        </button>
+                    </form>
+                </div>
             </div>
         @elseif($doc['is_approved'] ?? false)
             <div class="doc-approved-label">

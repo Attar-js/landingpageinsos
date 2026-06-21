@@ -244,6 +244,25 @@
         font-size: 0.95rem;
         border-radius: 8px;
         min-height: 40px;
+        width: 100%;
+    }
+
+    .doc-review-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .doc-review-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .doc-review-form {
+        margin: 0;
+        display: flex;
+        width: 100%;
     }
 
     .doc-review-actions {
@@ -296,6 +315,10 @@
         flex-direction: column;
         gap: 8px;
         margin-top: 14px;
+    }
+
+    .doc-file-actions .doc-action-btn {
+        margin-top: 0;
     }
 
     .btn-hapus-dokumen {

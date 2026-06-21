@@ -120,6 +120,9 @@
                         <ul class="quick-access">
 
                             @if(Auth::check())
+                            <li class="notification-access d-none d-xl-block">
+                                <x-notifications-dropdown />
+                            </li>
                             <li class="account-access rbt-user-wrapper d-none d-xl-block">
                                 <a href="#"><i class="feather-user"></i>{{ Auth::user()->isDosen() ? (Auth::user()->nip ?? 'Dosen') : (Auth::user()->nim ?? 'User') }}</a>
                                 <div class="rbt-user-menu-list-wrapper">
@@ -154,6 +157,9 @@
                             @endif
 
                             @if(Auth::check())
+                            <li class="notification-access access-icon d-block d-xl-none">
+                                <x-notifications-dropdown />
+                            </li>
                             <li class="access-icon rbt-user-wrapper d-block d-xl-none">
                                 <a class="rbt-round-btn" href="#"><i class="feather-user"></i></a>
                                 <div class="rbt-user-menu-list-wrapper">
