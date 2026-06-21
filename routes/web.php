@@ -171,6 +171,7 @@ Route::middleware('auth')->group(function () {
     
     // Template Routes
     Route::get('/template', [App\Http\Controllers\TemplateDokumenController::class, 'index'])->name('template.index');
+    Route::get('/template/download/{key}', [App\Http\Controllers\TemplateDokumenController::class, 'download'])->name('template.download');
 
     Route::get('/template/proposal', fn () => redirect(url('/template#template-proposal')))->name('template.proposal');
     Route::get('/template/laporan', fn () => redirect(url('/template#template-laporan')))->name('template.laporan');

@@ -171,9 +171,7 @@
                        class="template-btn template-btn-lihat">
                         Lihat
                     </a>
-                    <a href="{{ $template['download_url'] }}"
-                       target="_blank"
-                       rel="noopener noreferrer"
+                    <a href="{{ route('template.download', $template['key']) }}"
                        class="template-btn template-btn-unduh">
                         Unduh
                     </a>
