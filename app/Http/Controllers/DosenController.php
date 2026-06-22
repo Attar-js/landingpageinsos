@@ -165,8 +165,6 @@ class DosenController extends Controller
      */
     public function penilaian()
     {
-        // Method ini tidak digunakan untuk halaman penilaian individual
-        // Redirect ke mahasiswa bimbingan
         return redirect()->route('dosen.mahasiswa-bimbingan');
     }
 
@@ -323,7 +321,6 @@ class DosenController extends Controller
                 'http_code' => $httpCode
             ]);
 
-            // JavaScript for real-time update and notification
             $jsCode = "
                 <script>
                     console.log('Nilai berhasil disimpan di project-akhir database');
@@ -566,9 +563,6 @@ class DosenController extends Controller
         return $dokumen;
     }
 
-    /**
-     * Ambil dokumen kelompok
-     */
     private function getDokumenKelompok($group)
     {
         $dokumen = [];
@@ -611,9 +605,6 @@ class DosenController extends Controller
         return $dokumen;
     }
 
-    /**
-     * Get jenis dokumen berdasarkan table name
-     */
     private function getJenisDokumen($table)
     {
         $jenis = [

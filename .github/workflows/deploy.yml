@@ -1,0 +1,194 @@
+# AutoDeploy v2.2 — sama dengan dashboard (landingpageinsos)
+# Target: deployv2.akhzafachrozy.my.id
+
+name: 🚀 AutoDeploy v2
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'README*'
+
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Mode deploy'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - update
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    name: 🔍 Detect & Validate
+    runs-on: ubuntu-latest
+    outputs:
+      app_type:    ${{ steps.detect.outputs.app_type }}
+      repo_slug:   ${{ steps.slug.outputs.repo_slug }}
+      deploy_mode: ${{ steps.mode.outputs.deploy_mode }}
+
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏷️ Generate repo slug
+        id: slug
+        run: |
+          SLUG=$(echo "${{ github.event.repository.name }}" \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed 's/[^a-z0-9-]/-/g' \
+            | sed 's/--*/-/g' \
+            | sed 's/^-//;s/-$//')
+          echo "repo_slug=$SLUG" >> "$GITHUB_OUTPUT"
+
+      - name: 🔎 Detect framework
+        id: detect
+        run: |
+          if [[ -f "artisan" && -f "composer.json" ]]; then
+            echo "app_type=laravel" >> "$GITHUB_OUTPUT"
+          else
+            echo "app_type=php-native" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 📋 Set deploy mode
+        id: mode
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "deploy_mode=${{ inputs.mode }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_mode=full" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 🧪 PHP syntax lint
+        run: |
+          find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \; | grep "Errors parsing" && exit 1 || echo "✅ Syntax OK"
+
+  deploy:
+    name: 🚀 Package & Deploy
+    runs-on: ubuntu-latest
+    needs: detect
+    env:
+      REPO_SLUG:   ${{ needs.detect.outputs.repo_slug }}
+      APP_TYPE:    ${{ needs.detect.outputs.app_type }}
+      DEPLOY_MODE: ${{ needs.detect.outputs.deploy_mode }}
+      DEPLOY_URL:  https://deployv2.akhzafachrozy.my.id
+
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Create deployment ZIP (with dotfiles)
+        run: |
+          find . \
+            -not -path "./.git/*" \
+            -not -path "./.github/*" \
+            -not -path "./node_modules/*" \
+            -not -path "./vendor/*" \
+            -not -name ".env" \
+            -not -name "deploy.zip" \
+            -not -name "*.log" \
+            | zip deploy.zip -@ -q
+          echo "zip_size=$(du -sh deploy.zip | cut -f1)" >> "$GITHUB_ENV"
+          echo "✅ ZIP berhasil dibuat: $(du -sh deploy.zip | cut -f1)"
+
+      - name: 🌐 Send to deploy endpoint
+        id: request
+        run: |
+          RESPONSE=$(curl -s -X POST \
+            -H "User-Agent: GitHub-Actions-AutoDeploy-v2" \
+            -F "key=autodeploy-classroom" \
+            -F "repo=$REPO_SLUG" \
+            -F "mode=$DEPLOY_MODE" \
+            -F "file=@deploy.zip" \
+            "$DEPLOY_URL")
+
+          echo "RAW_RESPONSE<<EOF" >> "$GITHUB_ENV"
+          echo "$RESPONSE" >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
+
+          if echo "$RESPONSE" | grep -q "AUTODEPLOY_START"; then
+             echo "status=success" >> "$GITHUB_ENV"
+          else
+             echo "status=failed" >> "$GITHUB_ENV"
+             echo "::error::Server returned error: $RESPONSE"
+             exit 1
+          fi
+
+      - name: 📊 Parse ADPL Results
+        if: always()
+        run: |
+          echo "P_DOMAIN=$(echo "${{ env.RAW_RESPONSE }}" | grep '^ADPL:domain=' | cut -d'=' -f2-)" >> "$GITHUB_ENV"
+          echo "P_PORT=$(echo "${{ env.RAW_RESPONSE }}" | grep '^ADPL:port=' | cut -d'=' -f2-)" >> "$GITHUB_ENV"
+          echo "P_SSH_USER=$(echo "${{ env.RAW_RESPONSE }}" | grep '^ADPL:ssh_user=' | cut -d'=' -f2-)" >> "$GITHUB_ENV"
+          echo "P_SSH_PASS=$(echo "${{ env.RAW_RESPONSE }}" | grep '^ADPL:ssh_pass=' | cut -d'=' -f2-)" >> "$GITHUB_ENV"
+          echo "P_SSH_CMD=$(echo "${{ env.RAW_RESPONSE }}" | grep '^ADPL:ssh_cmd=' | cut -d'=' -f2-)" >> "$GITHUB_ENV"
+          echo "P_SERVICE=$(echo "${{ env.RAW_RESPONSE }}" | grep '^ADPL:service=' | cut -d'=' -f2-)" >> "$GITHUB_ENV"
+          echo "P_WEB_STATUS=$(echo "${{ env.RAW_RESPONSE }}" | grep '^ADPL:web_status=' | cut -d'=' -f2-)" >> "$GITHUB_ENV"
+          echo "P_FILE_OWNER=$(echo "${{ env.RAW_RESPONSE }}" | grep '^ADPL:file_owner=' | cut -d'=' -f2-)" >> "$GITHUB_ENV"
+
+      - name: 📝 Job Summary
+        if: always()
+        run: |
+          if [[ "${{ env.status }}" == "success" ]]; then
+            ICON="✅"
+          else
+            ICON="❌"
+          fi
+
+          cat >> "$GITHUB_STEP_SUMMARY" << EOF
+          # ${ICON} AutoDeploy v2.2 — $REPO_SLUG
+
+          | Info | Detail |
+          | :--- | :--- |
+          | **Domain** | [${{ env.P_DOMAIN }}](${{ env.P_DOMAIN }}) |
+          | **App Type** | \`$APP_TYPE\` |
+          | **Web Status** | ${{ env.P_WEB_STATUS }} |
+          | **Port** | \`${{ env.P_PORT }}\` |
+          | **SSH User** | \`${{ env.P_SSH_USER }}\` |
+
+          ## 💻 Akses SSH
+          \`\`\`bash
+          ${{ env.P_SSH_CMD }}
+          # Password: ${{ env.P_SSH_PASS }}
+          \`\`\`
+
+          $( [[ "$APP_TYPE" == "laravel" ]] && echo "
+          ## 📋 Laravel Next Steps (SIINSOS landing)
+          1. SSH → \`cd /www/wwwroot/hosting/$REPO_SLUG\`
+          2. \`composer install --no-dev --optimize-autoloader\`
+          3. Buat \`.env\` (MySQL, APP_DASHBOARD_URL ke dashboardinsos)
+          4. \`php artisan key:generate\`
+          5. **JANGAN migrate:fresh** — import dump DB dashboardta
+          6. Symlink: \`cd /www/wwwroot/hosting && ln -sfn dashboardinsos dashboard\`
+          7. \`php artisan storage:link\` (di dashboard juga)
+          " )
+
+          <details><summary>📄 Raw Server Log</summary>
+          \`\`\`text
+          ${{ env.RAW_RESPONSE }}
+          \`\`\`
+          </details>
+          EOF
+
+  notify:
+    name: 📣 Notification
+    runs-on: ubuntu-latest
+    needs: [detect, deploy]
+    if: always()
+    steps:
+      - name: Print Final Status
+        run: |
+          echo "Deployment for ${{ needs.detect.outputs.repo_slug }} finished with status: ${{ needs.deploy.result }}"
